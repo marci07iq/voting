@@ -115,6 +115,11 @@
         padding: 0px;
         margin: 0px;
       }
+
+      input[type="radio"] {
+        height: 1em;
+        width: 1em
+      }
     </style>
   </head>
   <body>
@@ -126,16 +131,32 @@
 
         //Generate errors (and page)
         ob_start();
-        if(isset($_REQUEST["faq"])) {
-          include __DIR__ . "/_help_content.php";
-        } else if(isset($_REQUEST["register_key"])) {
-          include __DIR__ . "/_register_content.php";
-        } else if(isset($_REQUEST["submit"])) {
-          include __DIR__ . "/_submit_content.php";
-        } else {
-          include __DIR__ . "/_index_content.php";
+        try {
+          $onError = function ($level, $message, $file, $line) {
+            throw new ErrorException($message, 0, $level, $file, $line);
+          };
+          set_error_handler($onError);
+
+          //echo "Test";
+
+          if(isset($_REQUEST["faq"])) {
+            include __DIR__ . "/_help_content.php";
+          } else if(isset($_REQUEST["register_key"])) {
+            include __DIR__ . "/_register_content.php";
+          } else if(isset($_REQUEST["submit"])) {
+            include __DIR__ . "/_submit_content.php";
+          } else {
+            include __DIR__ . "/_index_content.php";
+          }
+
+          $ob = ob_get_clean();
+        } catch (Throwable $throwable) {
+          Messages::error("Error: " . $throwable->getMessage());
+          ob_end_clean();
+          $ob = "A fatal error has occured.";
+        } finally {
+          restore_error_handler();
         }
-        $ob = ob_get_clean();
 
       ?>
         <div class="alert_container" id="alert_container">
@@ -173,6 +194,13 @@
             <a href="/index.php<?php echo ("?token=" . htmlspecialchars(urlencode($my_token))); ?>">Go to my elections</a>&emsp;
             <?php } ?>
             <a href="/index.php?faq<?php if(is_string($my_token)) echo ("&ntoken=" . htmlspecialchars(urlencode($my_token))); ?>">Help</a>&emsp;
+            <?php
+            if(isset($_REQUEST["token"]) || isset($_REQUEST["ntoken"])) {
+            ?>
+              <a href="/index.php">Logout</a>&emsp;
+            <?php
+            }
+            ?>
           </p>
       <?php
         echo $ob;

@@ -1,12 +1,13 @@
 <?php
-function print_booth($token_check) {
+function print_booth($token_check, $ranked) {
   $json = json_decode($token_check["json"]);
   //echo $token_check["json"];
   if($json === NULL) {
     return array("ok" => FALSE, "msg" => "Election data invalid: " . json_last_error_msg());
   }
 
-  ?>
+  if ($ranked) {
+?>
 
   <p>
     You must rank candidates, using increasing integers starting from 1.</br>
@@ -20,14 +21,29 @@ function print_booth($token_check) {
     </br>
   </p>
 
+<?php
+  } else {
+?>
+  <p>
+    Please tick a single option.
+  </p>
+<?php
+  }
+?>
+
   <form method="POST" action="index.php" id="votingbooth" onsubmit='return booth_submit();'>
     <h2><?php echo htmlspecialchars($token_check["name"]) ?></h2>
     <p><?php echo htmlspecialchars($token_check["description"]) ?></p>
     <input type="hidden" name="election" value="<?php echo htmlspecialchars($token_check["id"]) ?>"/>
     <input type="hidden" name="token" value="<?php echo htmlspecialchars($_REQUEST["token"]) ?>"/>
 
+    <?php
+    if($ranked) {
+    ?>
+
     <div id="candidates">
-    <?php foreach($json as $candidate) {
+    <?php
+    foreach($json as $candidate) {
       ?>
       <div class="candidate">
         <input class="preference" type="number" step="1" min="0" name="vote[<?php echo htmlspecialchars($candidate->id) ?>]" id="vote_<?php echo htmlspecialchars($candidate->id) ?>"/>
@@ -37,6 +53,27 @@ function print_booth($token_check) {
     }
     ?>
     </div>
+
+    <?php
+    } else {
+    ?>
+
+    <div id="candidates">
+    <?php
+    foreach($json as $candidate) {
+      ?>
+      <div class="candidate">
+        <input class="selection" type="radio" name="votes" id="vote_<?php echo htmlspecialchars($candidate->id) ?>" value="<?php echo htmlspecialchars($candidate->id) ?>"/>
+        <label for="vote_<?php echo htmlspecialchars($candidate->id) ?>" class="name"><?php echo htmlspecialchars($candidate->name)?></label>
+      </div>
+      <?php
+    }
+    ?>
+    </div>
+
+    <?php
+    }
+    ?>
 
     <script>
       function booth_submit() {
@@ -48,6 +85,10 @@ function print_booth($token_check) {
         }
         return res;
       }
+
+    <?php
+    if($ranked) {
+    ?>
 
       function check_vote() {
         let prefs = document.querySelectorAll("#votingbooth input.preference");
@@ -102,6 +143,39 @@ function print_booth($token_check) {
 
         return soft_msg;
       }
+
+    <?php
+    } else {
+    ?>
+
+      function check_vote() {
+        let prefs = document.querySelectorAll("#votingbooth input.selection");
+
+        let vote_cnt = 0;
+
+        for(let pi = 0; pi < prefs.length; pi++) {
+          let pref = prefs[pi];
+          if(pref.checked) {
+            ++vote_cnt;
+          }
+        }
+
+        let soft_msg = "Your vote appears to be valid";
+
+        if(vote_cnt == 0) {
+          soft_msg = "You must select one option";
+        }
+
+        if(vote_cnt > 1) {
+          soft_msg = "You must select only one option";
+        }
+
+        return soft_msg;
+      }
+
+    <?php
+    }
+    ?>
     </script>
 
     </br>

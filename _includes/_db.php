@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . "/_message.php";
+require_once __DIR__ . "/_config.php";
 
 function randomBase64($length)
 {
@@ -44,17 +45,19 @@ class DB
 
   public static function connect()
   {
+    global $CONFIG_DB_address, $CONFIG_DB_database, $CONFIG_DB_username, $CONFIG_DB_password;
     try {
       $c = array(
-        "server"=>"",
-        "dbname"=>"",
-        "user"=>"",
-        "pw"=>"");
+        "server"=>$CONFIG_DB_address,
+        "dbname"=>$CONFIG_DB_database,
+        "user"=>$CONFIG_DB_username,
+        "pw"=>$CONFIG_DB_password);
       DB::$dbh = new PDO("mysql:host=" . $c["server"] . ";dbname=" . $c["dbname"], $c["user"], $c["pw"], array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8") );
       // set the PDO error mode to exception
       DB::$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     } catch (PDOException $e) {
       Messages::error($e->getMessage(), "DB::connect()");
+      DB::$dbh = null;
       //echo "Connection failed: " . $e->getMessage();
     }
   }
@@ -71,6 +74,9 @@ class DB
     try {
       if (!isset(DB::$dbh) || DB::$dbh === null) {
         DB::connect();
+      }
+      if (!isset(DB::$dbh) || DB::$dbh === null) {
+        return false;
       }
 
       $stmt = DB::$dbh->prepare($t);

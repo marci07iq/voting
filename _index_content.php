@@ -28,7 +28,7 @@ if(isset($_REQUEST["election"]) && isset($_REQUEST["token"])) {
     } else {
       //Token unused. Print voting booth
       require_once __DIR__ . "/_booth.php";
-      $booth_print = print_booth($check_token);
+      $booth_print = print_booth($check_token, $check_token["ranked"]);
 
       if(!isset($booth_print["ok"]) || $booth_print["ok"] !== TRUE) {
         if(isset($booth_print["msg"]) && is_string($booth_print["msg"])) {
@@ -76,6 +76,8 @@ if(isset($_REQUEST["election"]) && isset($_REQUEST["token"])) {
 
       <p><?php echo htmlspecialchars($election["description"]) ?></p>
 
+      <h4>Eligibility</h4>
+
       <?php
       
       if($election_archived) {
@@ -106,8 +108,11 @@ if(isset($_REQUEST["election"]) && isset($_REQUEST["token"])) {
         } else {
           echo "<p>You are not eligible to vote in this election with your current token.</p>";
         }
+      } else {
+        echo "<p>You are not logged in with a token.</p>";
       }
       ?>
+      <h4>Results</h4>
       <p><?php
       if($election_voteable) {
         echo ((count($proofs["res"]) > 0) ? count($proofs["res"]) : "No") . " votes have been cast so far.";
@@ -136,7 +141,7 @@ if(isset($_REQUEST["election"]) && isset($_REQUEST["token"])) {
 } elseif(isset($_REQUEST["token"]) && is_string($_REQUEST["token"])) {
   //Token only: My elections overview
   
-  $elections = list_elections();
+  $elections = list_my_elections();
 
   if(!isset($elections["ok"]) || $elections["ok"] !== TRUE) {
     if(isset($elections["msg"]) && is_string($elections["msg"])) {

@@ -3,7 +3,8 @@
 require_once __DIR__ . "/_includes/_db.php";
 require_once __DIR__ . "/_includes/_mail.php";
 
-function list_elections() {
+//List elections for user with "token"
+function list_my_elections() {
   $ret = array();
   if(isset($_REQUEST["token"]) && is_string($_REQUEST["token"])) {
     $token = $_REQUEST["token"];
@@ -20,6 +21,7 @@ function list_elections() {
   return array("ok"=>FALSE, "msg"=>"Invalid query");
 }
 
+//List elections for non-logged in user
 function list_all_elections() {
   $ret = array();
   $res = DB::query("SELECT elections.id AS id, elections.name AS name, elections.open AS open, elections.archived AS archived FROM elections ORDER BY elections.sid ASC");
@@ -32,13 +34,25 @@ function list_all_elections() {
   return array("ok"=>FALSE, "msg"=>"Database error");
 }
 
+//Load token data specific to election
 function check_token_variable($token, $election) {
   if(is_string($token) && is_string($election)) {
-    $res = DB::query("SELECT elections.sid AS sid, elections.id AS id, elections.name AS name, elections.description AS description, elections.json AS json, elections.open AS open, elections.archived AS archived, tokens.used AS used FROM tokens INNER JOIN elections ON tokens.election = elections.sid WHERE tokens.token=:token AND elections.id = :election", array(":token" => $token, ":election" => $election));
+    $res = DB::query("SELECT elections.sid AS sid, elections.id AS id, elections.name AS name, elections.description AS description, elections.json AS json, elections.ranked as ranked, elections.open AS open, elections.archived AS archived, tokens.used AS used FROM tokens INNER JOIN elections ON tokens.election = elections.sid WHERE tokens.token=:token AND elections.id = :election", array(":token" => $token, ":election" => $election));
     if($res) {
       if($res->rowCount() === 1) {
         $r = $res->fetch(PDO::FETCH_ASSOC);
-        return array("ok" => TRUE, "sid" => $r["sid"], "id" => $r["id"], "name" => $r["name"], "description" => $r["description"], "json" => $r["json"], "open" => ($r["open"] == 1), "used" => (0 != $r["used"]), "archived" => ($r["archived"] == 1));
+        return array(
+          "ok" => TRUE,
+          "sid" => $r["sid"],
+          "id" => $r["id"],
+          "name" => $r["name"],
+          "description" => $r["description"],
+          "json" => $r["json"],
+          "ranked" => $r["ranked"],
+          "open" => ($r["open"] == 1),
+          "used" => (0 != $r["used"]),
+          "archived" => ($r["archived"] == 1)
+        );
       }
       return array("ok"=>FALSE, "msg"=>"Invalid token");
     }
@@ -47,6 +61,7 @@ function check_token_variable($token, $election) {
   return array("ok"=>FALSE, "msg"=>"Invalid query");
 }
 
+//Load token data from "token" and "election"
 function check_token() {
   if(isset($_REQUEST["token"]) && isset($_REQUEST["election"])) {
     $token = $_REQUEST["token"];
@@ -57,6 +72,7 @@ function check_token() {
   return array("ok"=>FALSE, "msg"=>"Invalid query");
 }
 
+//Load token data from "ntoken" and "election"
 function check_ntoken() {
   if(isset($_REQUEST["ntoken"]) && isset($_REQUEST["election"])) {
     $token = $_REQUEST["ntoken"];
@@ -67,6 +83,7 @@ function check_ntoken() {
   return array("ok"=>FALSE, "msg"=>"Invalid query");
 }
 
+//Check if proof exists
 function exists_proof($proof) {
   $res = DB::query("SELECT COUNT(proof) FROM votes WHERE :proof = proof", array(":proof" => $proof));
   if($res) {

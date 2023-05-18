@@ -12,16 +12,38 @@ function read_ballot($token_check) {
   
   $res = array();
 
-  foreach($json as $candidate) {
-    if(!isset($_POST["vote"][$candidate->id])) {
-      return array("ok" => FALSE, "msg" => "Vote for candidate " . $candidate->name . " is missing.");
-    } else {
-      $val = $_POST["vote"][$candidate->id];
-      if(is_string($val)) {
-        $res[$candidate->id] = $val;
+  if($token_check["ranked"]) {
+    foreach($json as $candidate) {
+      if(!isset($_POST["vote"][$candidate->id])) {
+        return array("ok" => FALSE, "msg" => "Vote for candidate " . $candidate->name . " is missing.");
       } else {
-        return array("ok" => FALSE, "msg" => "Vote for candidate " . $candidate->name . " is not a string.");
+        $val = $_POST["vote"][$candidate->id];
+        if(is_string($val)) {
+          $res[$candidate->id] = $val;
+        } else {
+          return array("ok" => FALSE, "msg" => "Vote for candidate " . $candidate->name . " is not a string.");
+        }
       }
+    }
+  } else {
+    if(!isset($_POST["votes"])) {
+      return array("ok" => FALSE, "msg" => "No votes cast.");
+    }
+    $val = $_POST["votes"];
+    if(!is_string($val)) {
+      return array("ok" => FALSE, "msg" => "Vote for candidate " . $candidate->name . " is not a string.");
+    }
+    $cnt = 0;
+    foreach($json as $candidate) {
+      if($candidate->id === $val) {
+        $res[$candidate->id] = "1";
+        $cnt = $cnt + 1;
+      } else {
+        $res[$candidate->id] = "";
+      }
+    }
+    if ($cnt !== 1) {
+      return array("ok" => FALSE, "msg" => "Expected one choice, found " . str($cnt) . ".");
     }
   }
   return array("ok" => TRUE, "res"=>json_encode($res));
