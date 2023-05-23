@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . "/_includes/_config.php";
+require_once __DIR__ . "/_includes/_config.php";
 ?>
 
 <h2>FAQ</h2>
@@ -36,7 +36,6 @@ Numbers should be written as unsigned decimal integers. (Only digits 0123456789,
 Other representations may be interpreted at the discretion of the returning officer if the intent is clear.</br>
 </br>
 You are able to cast a ballot that does not follow these rules, however during counting they will be marked as spoilt, and not counted.</br>
-</br>
 
 <h3>What is a token?</h3>
 
@@ -47,14 +46,14 @@ You don't have to vote in all elections you are eligible for, or in any specific
 <h3>How do I get my token?</h3>
 
 When an election is announced, you will get an email with your voting link. This link will look something like this:</br>
-https://<?php echo htmlspecialchars($CONFIG_url); ?>?token=&ltSome letters and numbers&gt</br>
+https://<?php echo htmlspecialchars(Config::SITE_URL); ?>?token=&ltSome letters and numbers&gt</br>
 This link contains your token, and clicking it will take you straight to voting.</br>
 </br>
 Due to reasons out of our control, this email may go to spam. Please check there too!</br>
 
 <h3>What if I didn't get my token?</h3>
 
-First, please check your spam folder. If you can't find it there, please contact the administrator <?php echo htmlspecialchars($CONFIG_webmaster_name); ?> at <a href="mailto:<?php echo htmlspecialchars($CONFIG_webmaster_email); ?>"><?php echo htmlspecialchars($CONFIG_webmaster_email); ?></a> to send it again.</br>
+First, please check your spam folder. If you can't find it there, please contact the administrator <?php echo htmlspecialchars(Config::WEBMASTER_NAME); ?> at <a href="mailto:<?php echo htmlspecialchars(Config::WEBMASTER_EMAIL); ?>"><?php echo htmlspecialchars(Config::WEBMASTER_EMAIL); ?></a> to send it again.</br>
 
 <h3><a id="verify"></a>How can I verify my vote?</h3>
 
@@ -79,9 +78,10 @@ Since it is impossible to trace which cast vote is yours, it is not possible to 
 
 <h3>My question is not listed here?</h3>
 
-Please contact the returning officer, <?php echo htmlspecialchars($CONFIG_webmaster_name); ?> at <a href="mailto:<?php echo htmlspecialchars($CONFIG_webmaster_email); ?>"><?php echo htmlspecialchars($CONFIG_webmaster_email); ?></a> with any questions you may have.
+Please contact the returning officer, <?php echo htmlspecialchars(Config::WEBMASTER_NAME); ?> at <a href="mailto:<?php echo htmlspecialchars(Config::WEBMASTER_EMAIL); ?>"><?php echo htmlspecialchars(Config::WEBMASTER_EMAIL); ?></a> with any questions you may have.
 
 <h3>What system is this?</h3>
 
-This system was developed back in 2020 to allow the Merton JCR Executive Committee elections to take place online during Covid. It was written by Marcell Szakaly, the JCR Returning Officer at the time, and has since been slightly modified.</br>
-To be as transparent as possible, the code is released open source under the MIT license at TODO.
+This system was developed back in 2020 to allow the Merton JCR Executive Committee elections to take place online during Covid.
+It was written by Marcell Szakaly, the JCR IT and Returning Officer at the time, and has since been slightly modified.</br>
+To be as transparent as possible, the code is released open source under the MIT license at <a href="https://github.com/marci07iq/voting">https://github.com/marci07iq/voting</a>.

@@ -1,7 +1,10 @@
+<?php
+require_once __DIR__ . "/_includes/_config.php";
+?>
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Merton JCR E-Voting</title>
+    <title><?php echo htmlspecialchars(Config::SITE_NAME); ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <style>

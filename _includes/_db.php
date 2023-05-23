@@ -45,13 +45,12 @@ class DB
 
   public static function connect()
   {
-    global $CONFIG_DB_address, $CONFIG_DB_database, $CONFIG_DB_username, $CONFIG_DB_password;
     try {
       $c = array(
-        "server"=>$CONFIG_DB_address,
-        "dbname"=>$CONFIG_DB_database,
-        "user"=>$CONFIG_DB_username,
-        "pw"=>$CONFIG_DB_password);
+        "server"=>Config::DB_ADDRESS,
+        "dbname"=>Config::DB_DATABASE,
+        "user"=>Config::DB_USERNAME,
+        "pw"=>Config::DB_PASSWORD);
       DB::$dbh = new PDO("mysql:host=" . $c["server"] . ";dbname=" . $c["dbname"], $c["user"], $c["pw"], array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8") );
       // set the PDO error mode to exception
       DB::$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
