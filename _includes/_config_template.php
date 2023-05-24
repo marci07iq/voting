@@ -15,6 +15,14 @@ class Config {
     const MAIL_NAME = "Election System";
     const MAIL_BACKEND = "sendmail"; //"sendmail", "mailgun", "dev-message"
 
+    const MAIL_REGISTER_SUBJECT = "Election voting key";
+    const MAIL_REGISTER_BODY =
+        "Dear voter,\r\r" .
+        "Your voting link for the upcoming election is: https://" . Config::SITE_URL . "/?token=%1\$s\r" .
+        "If you have any concerns, please contact " . Config::WEBMASTER_EMAIL . " for information about voting.\r\r" .
+        "Happy voting,\r" .
+        "Your organisation";
+
     const MAIL_MAILGUN_APIKEY = "api:####";
     const MAIL_MAILGUN_APINAME = "https://api.mailgun.net/v3/####";
 }

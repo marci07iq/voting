@@ -32,15 +32,16 @@ function sendMail($to, $subject, $text)
 
       $session = curl_init(Config::MAIL_MAILGUN_APINAME . '/messages');
       curl_setopt($session, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-      curl_setopt($session, CURLOPT_USERPWD, 'api:' . Config::MAIL_MAILGUN_APIKEY);
+      curl_setopt($session, CURLOPT_USERPWD, Config::MAIL_MAILGUN_APIKEY);
       curl_setopt($session, CURLOPT_POST, true);
       curl_setopt($session, CURLOPT_POSTFIELDS, $array_data);
       curl_setopt($session, CURLOPT_HEADER, false);
       curl_setopt($session, CURLOPT_ENCODING, 'UTF-8');
       curl_setopt($session, CURLOPT_SSL_VERIFYPEER, false);
+      curl_setopt($session, CURLOPT_RETURNTRANSFER, TRUE);
 
       $response = curl_exec($session);
-      if($response !== True) {
+      if($response === False) {
         Messages::error("Call failed", "sendMail()");
         return False;
       }
