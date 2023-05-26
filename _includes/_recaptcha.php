@@ -1,8 +1,8 @@
 <?php
 class Captcha
 {
-  private static $public_key = "";
-  private static $secret_key = "";
+  private static $public_key = Config::CAPTCHA_PUBLIC;
+  private static $secret_key = Config::CAPTCHA_PRIVATE;
 
   public static function verify()
   {

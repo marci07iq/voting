@@ -10,6 +10,9 @@ class Config {
     const DB_PASSWORD = "password";
     const DB_DATABASE = "demo";
 
+    const CAPTCHA_PUBLIC = "";
+    const CAPTCHA_PRIVATE = "";
+    
     const MAIL_DOMAIN = "voting.example.com";
     const MAIL_ACCOUNT = "noreply";
     const MAIL_NAME = "Election System";
